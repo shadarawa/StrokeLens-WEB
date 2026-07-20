@@ -1,156 +1,234 @@
 # StrokeLens-WEB
 Graduation Project: AI-powered Stroke Risk Prediction Web Application
-# StrokeLens Web Security Application
+# StrokeLens Web Security
 
-StrokeLens is a secure Flask based web application designed to support scenario based stroke risk prediction through a role aware clinical interface.
+StrokeLens Web Security is a Flask based web application that demonstrates secure authentication and web security mechanisms.
 
-This repository focuses on the web application layer and the web security controls implemented around authentication, authorization, clinical data handling, prediction requests, secure reporting, and governed model retraining.
+This repository focuses only on the web application and web security components of StrokeLens.
 
-## Project Purpose
+The web application was developed using Flask for backend routing and HTML, CSS, and JavaScript for the user interface.
 
-The project demonstrates how a machine learning based healthcare system can be integrated into a secure web application.
+## Project Overview
 
-The web platform allows authorized users to submit clinical data, select an appropriate prediction scenario, review prediction results, generate verifiable reports, and access administrative model management functions according to their assigned roles.
+The authentication process uses two stages.
 
-The system is an academic prototype and is not intended to replace professional medical diagnosis or clinical judgment.
+First, the system verifies the username or email address, password, and selected user role.
 
-## Web Application Features
+Second, the system generates a six digit one time password and sends it to the user's registered email address.
 
-1. Secure user authentication
+The user must enter the correct OTP before accessing the protected pages of the application.
 
-2. One time password verification by email
+Passwords are stored as secure hashes using Werkzeug and are never stored as plain text.
 
-3. Role based access control
+The application also applies password complexity requirements when users update or reset their passwords.
 
-4. Clinician, data scientist, and administrator roles
+To reduce brute force attacks, the system tracks failed login attempts and temporarily locks the account after five unsuccessful attempts.
 
-5. Scenario based stroke risk prediction
+Role based access control ensures that users can access only the pages and functions assigned to their roles.
 
-6. Clinical input validation
+The system also uses limited session lifetimes, environment variables for sensitive configuration, secure password reset functionality, and security alert emails.
 
-7. Explainability and prediction review
+This repository does not include machine learning training, prediction, result analysis, retraining, reports, or logs.
 
-8. Secure PDF report generation and verification
+It focuses only on the implementation of the secure web authentication layer.
 
-9. User profile and password management
+## Main Security Features
 
-10. Administrative audit log monitoring
+1. Secure user login
 
-11. Controlled model retraining workflows
+2. Email based OTP verification
 
-12. Account lockout after repeated failed login attempts
+3. Password hashing using Werkzeug
 
-## Web Security Features
+4. Strong password validation
 
-### Password Security
+5. Role based access control
 
-User passwords are never stored as plain text. Passwords are hashed using Werkzeug password hashing functions before they are stored in the database.
+6. Failed login attempt tracking
 
-The application also applies password complexity validation when a password is changed or reset.
+7. Temporary account lockout
 
-### One Time Password Authentication
+8. Secure password reset
 
-After successful username, password, and role validation, the system generates a six digit OTP.
+9. Limited session lifetime
 
-The OTP is hashed before being stored in the session and has a limited validity period.
+10. Environment based secret management
 
-This provides an additional authentication layer and reduces the risk associated with stolen passwords.
+11. Security alert emails
 
-### Role Based Access Control
+12. User profile management
 
-The system defines separate permissions for clinicians, data scientists, and administrators.
+## Web Interface
 
-Sensitive functions such as case review, report generation, report verification, and model retraining are restricted according to the authenticated user's role.
+### Login Page
 
-### Account Lockout
+The login page allows the user to enter a username or email address, password, and assigned role.
 
-Repeated failed login attempts are recorded.
+The selected role must match the role stored for the user account.
 
-After five failed attempts, the account is temporarily locked to reduce brute force and password guessing attacks.
+<img width="893" height="668" alt="image" src="https://github.com/user-attachments/assets/60308d7c-62a7-43c8-be8a-1492049b9b56" />
 
-### Session Security
 
-Authenticated sessions have a limited lifetime.
+### OTP Verification Page
 
-The application clears temporary authentication data after OTP verification and uses a secret key supplied through an environment variable.
+After the login credentials are successfully verified, the system sends a six digit OTP to the user's registered email address.
 
-Production deployment should additionally enable secure, HTTP only, and SameSite cookie settings.
+The user must enter the correct OTP before accessing the protected application pages.
+<img width="893" height="586" alt="image" src="https://github.com/user-attachments/assets/9a809a95-62ca-4411-868a-85e69b3bf9ca" />
 
-### Audit Logging
 
-Security relevant and operational activities are recorded to support accountability, traceability, and incident review.
+### Forgot Password Page
 
-Examples include login activity, clinical case actions, report generation, report verification, and model retraining operations.
+The forgot password page allows users to start the password recovery process using their registered account information.
 
-### Cryptographic Report Verification
+### Reset Password Page
 
-Generated reports can be digitally signed and verified using elliptic curve digital signatures.
+The reset password page allows users to create a new password.
 
-The public key may be distributed for verification, while the private signing key must never be committed to the repository.
+The new password must satisfy the defined password complexity requirements before it is accepted.
 
-### Secret Management
+<img width="893" height="647" alt="image" src="https://github.com/user-attachments/assets/2daefe11-3a04-4086-a824-3df4921130aa" />
 
-Email credentials, application secret keys, database connection strings, and private cryptographic keys are excluded from source control.
 
-These values must be provided through environment variables or an approved secret management service.
+### Security Dashboard
 
-## Prediction Scenarios
+The dashboard provides access to the web security functions available to the authenticated user.
 
-The application supports three information availability scenarios.
+The displayed content can be controlled according to the assigned user role.
 
-### S1 Early Strict
+<img width="897" height="976" alt="image" src="https://github.com/user-attachments/assets/7131b7dd-e81a-483c-ad1e-a9548f91aa1a" />
 
-Uses demographic information and medical history variables that are available before or during an initial early assessment.
 
-### S2 Early Admission
+### User Profile Page
 
-Extends S1 with indicators that are available during admission.
+The profile page allows authenticated users to update their email address or password.
 
-### S3 In Hospital Update
+The current password must be verified before sensitive account information is changed.
 
-Extends S2 with hospitalization derived variables.
+<img width="908" height="1100" alt="image" src="https://github.com/user-attachments/assets/ffc5c727-2698-47e0-b945-c6acad8d6768" />
 
-The scenario separation prevents early predictions from using information that would only become available later. This reduces information leakage and makes the evaluation more realistic.
 
-## Why Model Training Is Included
+### Account Security
 
-Model training is included because the web application is not only a static user interface.
+The application protects user accounts through OTP verification, password hashing, account lockout, session expiration, and role based access control.
 
-The application communicates with trained machine learning models to produce stroke risk predictions.
+## Authentication Workflow
 
-The initial training process learns patterns from historical, approved clinical data. During inference, the web application loads the trained model and applies it to newly submitted patient information.
+The secure authentication workflow follows these steps:
 
-The project also includes governed retraining to demonstrate controlled model lifecycle management.
+1. The user enters a username or email address.
 
-Retraining is not performed directly after every prediction. Only reviewed, approved, and labeled cases should be considered for future training.
+2. The user enters the account password.
 
-This design is used for the following reasons:
+3. The user selects the assigned role.
 
-1. To improve the model when reliable new data becomes available
+4. The system verifies the account information.
 
-2. To reduce the effect of model drift
+5. The system checks whether the account is temporarily locked.
 
-3. To prevent unverified user input from automatically changing the deployed model
+6. The system verifies the submitted password against the stored password hash.
 
-4. To preserve model versioning and traceability
+7. The system generates a six digit OTP.
 
-5. To compare a newly trained challenger model with the currently deployed model before replacement
+8. The OTP is sent to the registered email address.
 
-6. To maintain human and administrative control over model updates
+9. The user enters the received OTP.
 
-The project provides two retraining approaches.
+10. The system verifies the OTP and its expiration time.
 
-### Quick Retraining
+11. The authenticated session is created.
 
-Quick retraining updates one selected scenario using newly approved and labeled cases while preserving the active decision threshold.
+12. The user is redirected to the authorized web page.
 
-### Full Retraining
+## Password Security
 
-Full retraining rebuilds and evaluates all supported candidate models and scenarios.
+Passwords are not stored as plain text.
 
-The best challenger is compared with the current deployed model before any replacement decision is made.
+Werkzeug password hashing functions are used to generate and verify password hashes.
 
-This controlled approach is safer than unrestricted online learning, particularly in a healthcare related application.
+New passwords must contain:
+
+1. At least eight characters
+
+2. At least one uppercase letter
+
+3. At least one lowercase letter
+
+4. At least one number
+
+5. At least one special character
+
+## OTP Security
+
+The OTP mechanism provides an additional authentication layer.
+
+The application applies the following OTP protections:
+
+1. The OTP contains six digits.
+
+2. The OTP is randomly generated.
+
+3. The OTP is sent to the registered email address.
+
+4. The OTP has a limited expiration period.
+
+5. The OTP is stored as a hash in the session.
+
+6. The OTP is removed after successful verification.
+
+7. Incorrect or expired OTP codes are rejected.
+
+## Account Lockout
+
+The system tracks unsuccessful login attempts.
+
+After five failed login attempts, the account is temporarily locked for ten minutes.
+
+This mechanism helps reduce brute force attacks and automated password guessing.
+
+A security alert email can also be sent to the registered email address when suspicious login activity is detected.
+
+## Role Based Access Control
+
+The application supports different user roles, including:
+
+1. Clinician
+
+2. Data Scientist
+
+3. Administrator
+
+The selected role during login must match the role stored in the account.
+
+Protected pages can verify the authenticated user's role before allowing access.
+
+This prevents users from accessing pages or functions that are not assigned to them.
+
+## Session Security
+
+The application creates a full authenticated session only after successful OTP verification.
+
+Sessions have a limited lifetime.
+
+Temporary authentication values are removed after the verification process.
+
+The Flask secret key is loaded from an environment variable instead of being stored directly in the source code.
+
+## Secret Management
+
+Sensitive values must be stored in environment variables.
+
+Example:
+
+```env
+STROKEWEB_SECRET_KEY=replace-with-a-secure-random-value
+MAIL_USERNAME=your-email@example.com
+MAIL_PASSWORD=your-email-application-password
+```
+
+The real `.env` file must not be uploaded to GitHub.
+
+Only `.env.example` should be included in the public repository.
 
 ## Technologies
 
@@ -158,27 +236,17 @@ This controlled approach is safer than unrestricted online learning, particularl
 
 2. Flask
 
-3. HTML
+3. Flask Mail
 
-4. CSS
+4. Werkzeug
 
-5. JavaScript
+5. SQLite
 
-6. SQLite or PostgreSQL
+6. HTML
 
-7. Werkzeug password hashing
+7. CSS
 
-8. Flask Mail
-
-9. Scikit learn
-
-10. XGBoost
-
-11. SHAP
-
-12. ReportLab
-
-13. Cryptography
+8. JavaScript
 
 ## Project Structure
 
@@ -186,8 +254,8 @@ This controlled approach is safer than unrestricted online learning, particularl
 StrokeLens-Web-Security/
 │
 ├── app.py
-├── requirements.txt
 ├── README.md
+├── requirements.txt
 ├── .gitignore
 ├── .env.example
 │
@@ -200,27 +268,27 @@ StrokeLens-Web-Security/
 │   ├── logo.png
 │   └── ecg-bg.jpg.jpg
 │
-├── app/
-│   ├── core/
-│   ├── services/
-│   ├── database.py
-│   └── models.py
-│
-├── ml/
-│   ├── retrain.py
-│   └── retrain_full_all_models.py
-│
-└── artifacts/
-    └── keys/
-        └── ecdsa_public.pem
+└── screenshots/
+    ├── login.png
+    ├── otp-verification.png
+    ├── forgot-password.png
+    ├── reset-password.png
+    ├── dashboard.png
+    ├── profile.png
+    └── account-security.png
 ```
 
-## Local Installation
+## Installation
 
 Clone the repository:
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/StrokeLens-Web-Security.git
+```
+
+Open the project folder:
+
+```bash
 cd StrokeLens-Web-Security
 ```
 
@@ -230,19 +298,13 @@ Create a virtual environment:
 python -m venv .venv
 ```
 
-Activate it on Windows:
+Activate the environment on Windows:
 
 ```bash
 .venv\Scripts\activate
 ```
 
-Activate it on Linux or macOS:
-
-```bash
-source .venv/bin/activate
-```
-
-Install the dependencies:
+Install the required packages:
 
 ```bash
 pip install -r requirements.txt
@@ -254,13 +316,7 @@ Create the local environment file:
 copy .env.example .env
 ```
 
-On Linux or macOS:
-
-```bash
-cp .env.example .env
-```
-
-Set secure local values inside `.env`.
+Add the required secret values to the `.env` file.
 
 Run the application:
 
@@ -268,63 +324,34 @@ Run the application:
 python app.py
 ```
 
-Open the application at:
+Open the application in the browser:
 
 ```text
 http://127.0.0.1:5000
 ```
 
-## Required Environment Variables
+## Security Notice
 
-```env
-STROKEWEB_SECRET_KEY=your-secure-random-secret
-MAIL_USERNAME=your-email@example.com
-MAIL_PASSWORD=your-email-app-password
-DATABASE_URL=sqlite:///app_dev.db
-```
+Before publishing the repository, make sure that screenshots do not display:
 
-Never commit the real `.env` file.
+1. Real passwords
 
-## Security Deployment Notes
+2. Real OTP codes
 
-Before production deployment:
+3. Personal email addresses
 
-1. Disable Flask debug mode
+4. Secret keys
 
-2. Use HTTPS
+5. Private account information
 
-3. Use secure and HTTP only cookies
+6. Database records
 
-4. Configure CSRF protection
+7. Password reset tokens
 
-5. Use a production WSGI server
+8. Gmail application passwords
 
-6. Replace SQLite with a managed database when appropriate
+## Academic Context
 
-7. Store secrets in a secure secret manager
+This repository presents the web authentication and web security component of the StrokeLens graduation project developed at Mutah University.
 
-8. Rotate all exposed credentials
-
-9. Use a persistent reset token store with expiration
-
-10. Add request rate limiting
-
-11. Restrict allowed file paths and uploaded file types
-
-12. Perform dependency and source code security scanning
-
-## Medical Disclaimer
-
-StrokeLens is an academic prototype developed for educational and research purposes.
-
-Its predictions must not be considered a medical diagnosis or used as the sole basis for clinical decisions.
-
-All outputs should be reviewed by qualified healthcare professionals.
-
-## Team
-
-Developed as a graduation project at Mutah University, Faculty of Information Technology.
-
-## License
-
-This repository may be distributed under an academic or open source license selected by the project team.
+The repository is intended for educational and demonstration purposes.
