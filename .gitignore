@@ -1,0 +1,53 @@
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Private cryptographic keys
+artifacts/keys/*private*
+*.key
+*.pem
+
+# Generated reports and runtime files
+reports/
+generated_reports/
+logs/
+*.log
+
+# Model artifacts
+*.joblib
+*.pkl
+*.pt
+*.pth
+*.onnx
+
+# IDE and operating system
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Project archives
+*.zip
+
+# Local documentation with personal information
+Project Documentation.docx
